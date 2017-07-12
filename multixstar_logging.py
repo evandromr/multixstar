@@ -48,7 +48,6 @@ def run_xstar(xcmd):
     os.environ['PFILES'] = os.getcwd()
     to_return += "copycat" + "\n"
     subprocess.Popen("cp $HEADAS/syspfiles/xstar.par ./", shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, env=os.environ).wait()
-    to_return += str(xcmd[1]) + "\n"
     p = subprocess.Popen("$FTOOLS/bin/" + xcmd[1], shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, env=os.environ)
     to_return += str(p.pid) + "\n"
     output = p.stdout.readlines()
@@ -76,7 +75,7 @@ def process_flags(argv=None):
     usage = "multixstar [options] <joblist|params>"
 
     description = """multixstar: manages parallel execution of multiple XSTAR
-    jobs, with python's multiprocessing module.\n
+    jobs, with python's multiprocessing module.
     Version: {version}""".format(version=__version__)
 
     epilogue = """Normally xstinitable will be launched to prompt for XSTAR
@@ -231,8 +230,6 @@ def main(argv=None):
     print(xcmds)
     # transform xstar parameters into dictionary
     xcmd_dict = make_xcmd_dict(xcmds)
-    print(xcmd_dict)
-    # create dir with modelname
     model_name = dict([z.split("=")for z in xcmd_dict[list(xcmd_dict.keys())[0]].replace("xstar ", "").split()])["modelname"].replace("'", "").replace('"', '')
     if not os.path.exists(model_name):
         os.mkdir(model_name)
