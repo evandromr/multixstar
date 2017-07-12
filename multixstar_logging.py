@@ -6,7 +6,8 @@ Written by Michael S. Noble (mnoble@space.mit.edu)
 Copyright (c) 2008-2009, Massachusetts Institute of Technology
 
 multixstar: Manages parallel execution of multiple XSTAR runs,
-using the multiprocessing python module.  XSTAR is part of the LHEASOFT astronomy toolset from
+using the multiprocessing python module.
+XSTAR is part of the LHEASOFT astronomy toolset from
 HEASARC, and is used to for calculating the physical conditions and
 emission spectra of photoionized gases (Kallman & Bautista 2001).
 """
@@ -33,12 +34,21 @@ def run(cmd, env_setup="", stdout=True):
         return p.communicate()[0]
     if stdout:
         if not env_setup == "":  # if env is set then use it
-            return return_stdout(subprocess.Popen(cmd, shell=True, executable=os.getenv("SHELL"), env=env_setup))  # run command with set env => sas hea and ciao running!
-        return return_stdout(subprocess.Popen(cmd, shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE))
+            return return_stdout(subprocess.Popen(cmd, shell=True,
+                                 executable=os.getenv("SHELL"),
+                                 env=env_setup))
+        return return_stdout(subprocess.Popen(cmd, shell=True,
+                             executable=os.getenv("SHELL"),
+                             stdout=subprocess.PIPE))
     else:
         if not env_setup == "":  # if env is set then use it
-            return subprocess.Popen(cmd, shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, env=env_setup, stdin=subprocess.PIPE)  # run command with set env => sas hea and ciao running!
-        return subprocess.Popen(cmd, shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            return subprocess.Popen(cmd, shell=True,
+                                    executable=os.getenv("SHELL"),
+                                    stdout=subprocess.PIPE, env=env_setup,
+                                    stdin=subprocess.PIPE)
+        return subprocess.Popen(cmd, shell=True,
+                                executable=os.getenv("SHELL"),
+                                stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
 
 def run_xstar(xcmd):
@@ -47,8 +57,12 @@ def run_xstar(xcmd):
     to_return += "Running:" + xcmd[0] + "\n"
     os.environ['PFILES'] = os.getcwd()
     to_return += "copycat" + "\n"
-    subprocess.Popen("cp $HEADAS/syspfiles/xstar.par ./", shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, env=os.environ).wait()
-    p = subprocess.Popen("$FTOOLS/bin/" + xcmd[1], shell=True, executable=os.getenv("SHELL"), stdout=subprocess.PIPE, env=os.environ)
+    subprocess.Popen("cp $HEADAS/syspfiles/xstar.par ./",
+                     shell=True, executable=os.getenv("SHELL"),
+                     stdout=subprocess.PIPE, env=os.environ).wait()
+    p = subprocess.Popen("$FTOOLS/bin/" + xcmd[1], shell=True,
+                         executable=os.getenv("SHELL"),
+                         stdout=subprocess.PIPE, env=os.environ)
     to_return += str(p.pid) + "\n"
     output = p.stdout.readlines()
     os.chdir("../")
@@ -174,14 +188,17 @@ def get_xcmds(args=[], binpath=""):
             if not args[0][0] == "/":
                 to_return = "2" + "\n"
                 joblist = args[0]
-                os.rename("../" + joblist, os.getcwd() + "/" + joblist.split("/")[-1])
+                os.rename("../" + joblist,
+                          os.getcwd() + "/" + joblist.split("/")[-1])
                 if joblist[-4:] == ".fits":
                     old1 = ".fits"
                     new1 = ".lis"
                 else:
                     old1 = ".lis"
                     new1 = ".fits"
-                os.rename("../" + joblist.replace(old1, new1), os.getcwd() + "/" + joblist.split("/")[-1].replace(old1, new1))
+                os.rename("../" + joblist.replace(old1, new1),
+                          os.getcwd() + "/" +
+                          joblist.split("/")[-1].replace(old1, new1))
             else:
                 os.rename(joblist, workDir + joblist.split("/")[-1])
                 joblist = joblist.split("/")[-1]
@@ -230,7 +247,10 @@ def main(argv=None):
     print(xcmds)
     # transform xstar parameters into dictionary
     xcmd_dict = make_xcmd_dict(xcmds)
-    model_name = dict([z.split("=")for z in xcmd_dict[list(xcmd_dict.keys())[0]].replace("xstar ", "").split()])["modelname"].replace("'", "").replace('"', '')
+    model_name = dict([z.split("=")for z in
+                      xcmd_dict[list(xcmd_dict.keys())[0]].replace(
+                      "xstar ", "").split()])["modelname"].replace(
+                      "'", "").replace('"', '')
     if not os.path.exists(model_name):
         os.mkdir(model_name)
     os.chdir(model_name)
@@ -275,7 +295,8 @@ def main(argv=None):
         padded = list(xcmd_dict.keys())
         padded.sort()
         for pad in padded:
-            run("$FTOOLS/bin/xstar2table xstarspec=./" + pad + "/xout_spect1.fits", os.environ)
+            run("$FTOOLS/bin/xstar2table xstarspec=./" + pad +
+                "/xout_spect1.fits", os.environ)
         if not keeplog:
             run("rm " + log_file)
     else:
