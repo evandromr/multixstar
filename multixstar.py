@@ -244,9 +244,9 @@ def main(argv=None):
 
     # create xstinitable list of parameters
     xcmds = get_xcmds(args, os.environ["FTOOLS"] + "/bin/")
-    print(xcmds)
     # transform xstar parameters into dictionary
     xcmd_dict = make_xcmd_dict(xcmds)
+    print(xcmd_dict.keys())
     model_name = dict([z.split("=")for z in
                       xcmd_dict[list(xcmd_dict.keys())[0]].replace(
                       "xstar ", "").split()])["modelname"].replace(
@@ -277,7 +277,6 @@ def main(argv=None):
     rootLogger.info("Start time: " + str(start_time))
     # end of loging setup
 
-    print(xcmd_dict.items())
     # create pool of processes
     p = mp.Pool(processes=max_process)
     runs_return = p.map(run_xstar, xcmd_dict.items(), 1)
@@ -295,8 +294,10 @@ def main(argv=None):
         padded = list(xcmd_dict.keys())
         padded.sort()
         for pad in padded:
-            run("$FTOOLS/bin/xstar2table xstarspec=./" + pad +
-                "/xout_spect1.fits", os.environ)
+            run("$FTOOLS/bin/xstar2table xstarspec=" + workDir + "/" +
+                model_name + "/" + pad + "/xout_spect1.fits", os.environ)
+            print("$FTOOLS/bin/xstar2table xstarspec=" + workDir + "/" +
+                  model_name + pad + "/xout_spect1.fits")
         if not keeplog:
             run("rm " + log_file)
     else:
