@@ -246,7 +246,6 @@ def main(argv=None):
     xcmds = get_xcmds(args, os.environ["FTOOLS"] + "/bin/")
     # transform xstar parameters into dictionary
     xcmd_dict = make_xcmd_dict(xcmds)
-    print(xcmd_dict.keys())
     model_name = dict([z.split("=")for z in
                       xcmd_dict[list(xcmd_dict.keys())[0]].replace(
                       "xstar ", "").split()])["modelname"].replace(
@@ -296,8 +295,6 @@ def main(argv=None):
         for pad in padded:
             run("$FTOOLS/bin/xstar2table xstarspec=" + workDir + "/" +
                 model_name + "/" + pad + "/xout_spect1.fits", os.environ)
-            print("$FTOOLS/bin/xstar2table xstarspec=" + workDir + "/" +
-                  model_name + pad + "/xout_spect1.fits")
         if not keeplog:
             run("rm " + log_file)
     else:
