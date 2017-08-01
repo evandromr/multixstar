@@ -7,3 +7,6 @@ TODO:
 
 REQUIRES:
   * requires the `six` module for compatibility between python 2 and 3
+  
+  
+  This is a fork of @nocturnalastro/multixstar
