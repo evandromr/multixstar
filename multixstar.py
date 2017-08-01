@@ -19,6 +19,7 @@ from six.moves import input
 import argparse
 import subprocess
 import os
+import shutil
 import multiprocessing as mp
 import getopt
 import datetime
@@ -227,6 +228,15 @@ def check_results(padded):
     return fault
 
 
+def set_pfiles(wdir):
+    """Set the pfiles to the defaults provided by HEASOFT"""
+    os.chdir(wdir)
+    pfiles_dir = os.path.join(wdir, 'pfiles')
+    defaultpfiles = os.path.join(os.environ["LHEASOFT"], "syspfiles")
+    shutil.copytree(defaultpfiles, pfiles_dir)
+    os.environ["PFILES"] = pfiles_dir
+
+
 def main(argv=None):
     # arg processing
     max_process, workDir, args, log_file, keeplog = process_flags()
@@ -241,6 +251,9 @@ def main(argv=None):
     workDir += wdir
     os.mkdir(workDir)
     os.chdir(workDir)
+
+    # use default pfiles locally
+    set_pfiles(workDir)
 
     # create xstinitable list of parameters
     xcmds = get_xcmds(args, os.environ["FTOOLS"] + "/bin/")
